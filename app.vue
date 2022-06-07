@@ -1,67 +1,18 @@
 <template>
   <div class="container">
-    <h1>Baby Name Generator</h1>
+    <h1>Name Generator</h1>
     <p>Choose your options and click the "Find Names" button</p>
     <div class="options-container">
-      <div class="option-container">
-        <h4>1. Choose a gender</h4>
-        <div class="option-buttons">
-          <button
-            class="option option-left"
-            :class="options.gender === Gender.BOY && 'option-active'"
-            @click="options.gender = Gender.BOY"
-          >Boy</button>
-          <button
-            class="option"
-            :class="options.gender === Gender.UNISEX && 'option-active'"
-            @click="options.gender = Gender.UNISEX"
-          >Unisex</button>
-          <button
-            class="option option-right"
-            :class="options.gender === Gender.GIRL && 'option-active'"
-            @click="options.gender = Gender.GIRL"
-          >Girl</button>
-        </div>
-      </div>
-      <div class="option-container">
-        <h4>1. Choose the name's popularity</h4>
-        <div class="option-buttons">
-          <button
-            class="option option-left"
-            :class="options.popularity === Popularity.TRENDY && 'option-active'"
-            @click="options.popularity = Popularity.TRENDY"
-          >Trendy</button>
-          <button
-            class="option option-right"
-            :class="options.popularity === Popularity.UNIQUE && 'option-active'"
-            @click="options.popularity = Popularity.UNIQUE"
-          >Unique</button>
-        </div>
-      </div>
-      <div class="option-container">
-        <h4>3. Choose name's length</h4>
-        <div class="option-buttons">
-          <button
-            class="option option-left"
-            :class="options.length === Length.LONG && 'option-active'"
-            @click="options.length = Length.LONG"
-          >Long</button>
-          <button
-            class="option"
-            :class="options.length === Length.ALL && 'option-active'"
-            @click="options.length = Length.ALL"
-          >All</button>
-          <button
-            class="option option-right"
-            :class="options.length === Length.SHORT && 'option-active'"
-            @click="options.length = Length.SHORT"
-          >Short</button>
-        </div>
-      </div>
+      <Option v-for="option in optionsArray" :key="option.title" />
 
       <button class="primary" @click="computeSelectedNames">Find Names</button>
     </div>
-    {{ selectedNames }}
+    <div class="cards-container">
+      <div v-for="name in selectedNames" :key="name" class="card">
+        {{ name }}
+        <p>x</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -84,14 +35,32 @@ const options = reactive<OptionState>({
 const selectedNames = ref<string[]>([])
 
 const computeSelectedNames = () => {
-      const filteredNames = names.filter((name) => name.gender === options.gender)
-            .filter((name) => name.popularity === options.popularity)
-            .filter((name) => {
-              if(options.length === Length.ALL) return true
-              else return name.length === options.length
-            })
-      selectedNames.value = filteredNames.map(name => name.name)
+    const filteredNames = names.filter((name) => name.gender === options.gender)
+          .filter((name) => name.popularity === options.popularity)
+          .filter((name) => {
+            if(options.length === Length.ALL) return true
+            else return name.length === options.length
+          })
+    selectedNames.value = filteredNames.map(name => name.name)
 }
+
+const optionsArray = [
+  {
+    title: '1) Choose a gender',
+    category: 'gender',
+    buttons: [Gender.GIRL, Gender.UNISEX, Gender.BOY]
+  },
+  {
+    title: '2) Choose the name\'s popularity',
+    category: 'popularity',
+    buttons: [Popularity.TRENDY, Popularity.UNIQUE]
+  },
+  {
+    title: '3) Choose name\'s length',
+    category: 'length',
+    buttons: [Length.SHORT, Length.ALL, Length.LONG]
+  }
+]
 </script>
 
 <style scoped>
@@ -154,5 +123,30 @@ const computeSelectedNames = () => {
   font-size: 1rem;
   margin-top: 1rem;
   cursor: pointer;
+}
+
+.cards-container {
+  display: flex;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background-color: rgb(27, 60, 138);
+  width: 28%;
+  color: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.card p {
+  position: absolute;
+  top: -29%;
+  left: 92.5%;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.178);
 }
 </style>
